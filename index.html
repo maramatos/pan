@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Pan Artesanal en Horno Holandés - Versión Móvil</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    background: #fdfdd8;
+    font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 14px 10px 40px 10px;
+    color: #111;
+    font-size: 16px;
+  }
+  .wrap { max-width: 520px; margin: 0 auto; }
+
+  h1 {
+    font-size: 19px;
+    margin: 4px 0 14px 0;
+    text-align: center;
+    color: #111;
+  }
+
+  .card {
+    background: #fff;
+    border: 2px solid #2f6d2f;
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    font-size: 13.5px;
+    color: #fff;
+    background: #2f6d2f;
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin: 0 0 12px 0;
+    letter-spacing: .3px;
+  }
+
+  /* ---- Calculadora ---- */
+  .field { display: flex; flex-direction: column; margin-bottom: 12px; }
+  .field label {
+    font-size: 13px;
+    color: #1d4d1d;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  .field input[type=number] {
+    border: 1.5px solid #2f6d2f;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 17px;
+    background: #f9fff5;
+    color: #111;
+    width: 100%;
+  }
+  .presets {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 2px;
+    margin-bottom: 4px;
+  }
+  .presets button {
+    flex: 1 1 70px;
+    border: 1.5px solid #2f6d2f;
+    background: #eef7ea;
+    color: #1d4d1d;
+    padding: 9px 4px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .presets button.active { background: #2f6d2f; color: #fff; }
+
+  .adv-toggle {
+    font-size: 13px;
+    color: #1d4d1d;
+    text-decoration: underline;
+    margin-top: 10px;
+    display: inline-block;
+    cursor: pointer;
+  }
+  .advanced { display: none; margin-top: 10px; }
+  .advanced.open { display: block; }
+
+  /* ---- Resultado ingredientes: lista tipo tarjeta ---- */
+  .ing-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #e3e3c0;
+  }
+  .ing-row:last-of-type { border-bottom: none; }
+  .ing-name { font-weight: bold; font-size: 15.5px; }
+  .ing-sub { font-size: 12px; color: #666; margin-top: 2px; }
+  .ing-amt { text-align: right; }
+  .ing-grams { font-size: 19px; font-weight: bold; color: #1d4d1d; }
+  .ing-pct { font-size: 11.5px; color: #888; }
+  .ing-total {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 10px;
+    margin-top: 4px;
+    border-top: 2px solid #2f6d2f;
+    font-weight: bold;
+  }
+
+  .note { font-size: 12px; color: #555; margin-top: 12px; line-height: 1.5; }
+
+  /* ---- Pasos de la receta ---- */
+  .group-title {
+    font-weight: bold;
+    color: #1d4d1d;
+    font-size: 15px;
+    margin: 4px 0 8px 2px;
+  }
+  .group-note {
+    font-size: 12px;
+    color: #666;
+    margin: -4px 0 10px 2px;
+  }
+
+  .step {
+    background: #f8fbf3;
+    border: 1.5px solid #cfe0c4;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+  }
+  .step:last-child { margin-bottom: 0; }
+  .step.sub { background: #fbfdf8; margin-left: 6px; }
+
+  .step-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .chk {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    cursor: pointer;
+    flex: 1;
+  }
+  .chk input[type=checkbox] {
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    margin-top: 1px;
+    accent-color: #2f6d2f;
+    cursor: pointer;
+  }
+  .step-title {
+    font-weight: bold;
+    font-size: 15px;
+    color: #1d4d1d;
+    line-height: 1.3;
+  }
+  .step-title.plain { font-weight: bold; color: #1d4d1d; font-size: 15px; }
+  .time-badge {
+    background: #2f6d2f;
+    color: #fff;
+    font-size: 11.5px;
+    font-weight: bold;
+    padding: 4px 9px;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .step-body {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.45;
+    color: #222;
+  }
+  .step-body.hint {
+    font-size: 12.5px;
+    color: #555;
+    margin-top: 6px;
+  }
+
+  .step.done { opacity: 0.5; }
+  .step.done .step-title,
+  .step.done .step-body { text-decoration: line-through; }
+
+  .day-divider {
+    text-align: center;
+    font-size: 12px;
+    color: #999;
+    margin: 6px 0 14px 0;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Pan Artesanal de Fermentación Lenta<br>en Horno Holandés</h1>
+
+  <!-- CALCULADORA -->
+  <div class="card">
+    <h2>1. Tus datos</h2>
+    <div class="field">
+      <label for="totalWeight">Peso total de masa deseado (g)</label>
+      <input type="number" id="totalWeight" value="1100" min="1" step="10" inputmode="numeric">
+    </div>
+    <div class="field">
+      <label for="hydration">Hidratación (%)</label>
+      <input type="number" id="hydration" value="70" min="50" max="100" step="1" inputmode="numeric">
+    </div>
+    <div class="presets">
+      <button data-hyd="65">65%</button>
+      <button data-hyd="70" class="active">70%</button>
+      <button data-hyd="75">75%</button>
+      <button data-hyd="80">80%</button>
+    </div>
+
+    <span class="adv-toggle" id="advToggle">⚙ ajustar % de levadura y sal</span>
+    <div class="advanced" id="advancedBox">
+      <div class="field" style="margin-top:8px">
+        <label for="yeastPct">Levadura seca congelada (% de la harina)</label>
+        <input type="number" id="yeastPct" value="0.13" min="0" max="5" step="0.01" inputmode="decimal">
+      </div>
+      <div class="field">
+        <label for="saltPct">Sal (% de la harina)</label>
+        <input type="number" id="saltPct" value="2" min="0" max="5" step="0.01" inputmode="decimal">
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTADOS -->
+  <div class="card">
+    <h2>2. Cantidades</h2>
+
+    <div class="ing-row">
+      <div>
+        <div class="ing-name">Harina de trigo</div>
+        <div class="ing-sub" id="outFlourCups">—</div>
+      </div>
+      <div class="ing-amt">
+        <div class="ing-grams" id="outFlour">—</div>
+        <div class="ing-pct">100%</div>
+      </div>
+    </div>
+
+    <div class="ing-row">
+      <div>
+        <div class="ing-name">Agua tibia</div>
+        <div class="ing-sub" id="outWaterCups">—</div>
+      </div>
+      <div class="ing-amt">
+        <div class="ing-grams" id="outWater">—</div>
+        <div class="ing-pct" id="outHydPct">—</div>
+      </div>
+    </div>
+
+    <div class="ing-row">
+      <div>
+        <div class="ing-name">Levadura seca congelada</div>
+        <div class="ing-sub" id="outYeastTsp">—</div>
+      </div>
+      <div class="ing-amt">
+        <div class="ing-grams" id="outYeast">—</div>
+        <div class="ing-pct" id="outYeastPct">—</div>
+      </div>
+    </div>
+
+    <div class="ing-row">
+      <div>
+        <div class="ing-name">Sal</div>
+        <div class="ing-sub" id="outSaltTsp">—</div>
+      </div>
+      <div class="ing-amt">
+        <div class="ing-grams" id="outSalt">—</div>
+        <div class="ing-pct" id="outSaltPct">—</div>
+      </div>
+    </div>
+
+    <div class="ing-total">
+      <span>Total masa</span>
+      <span id="outTotal">—</span>
+    </div>
+
+    <div class="note">
+      Tazas aprox. (harina ≈ 130 g/taza, agua ≈ 240 g/taza). Cucharaditas según densidad original (¼ cdta levadura ≈ 0,8 g · 2¼ cdta sal ≈ 12 g).<br>
+      En caso de duda sobre la levadura: actívala en agua tibia, reposa 10 min y verifica si hace espuma.
+    </div>
+  </div>
+
+  <!-- DIA 1 -->
+  <div class="card">
+    <h2>Día 1 — disponer ~5 horas</h2>
+
+    <div class="group-title">Mezcla inicial</div>
+    <div class="step sub">
+      <div class="step-head">
+        <span class="step-title plain">Opción 1</span>
+        <span class="time-badge">30 min</span>
+      </div>
+      <p class="step-body">Mezcla agua, levadura y harina hasta que no quede harina seca. No amasar. Tapa y deja reposar a temperatura ambiente</p>
+    </div>
+    <div class="step sub">
+      <div class="step-head">
+        <span class="step-title plain">Opción 2</span>
+        <span class="time-badge">60 + 30 min</span>
+      </div>
+      <p class="step-body">Mezcla solo harina y agua hasta que no quede harina seca. No amasar. Tapa y deja a temperatura ambiente. Luego incorpora la levadura disuelta en un poco de agua y reposa</p>
+    </div>
+    <div class="step sub chk-row">
+      <div class="step-head">
+        <label class="chk">
+          <input type="checkbox" class="step-check">
+          <span class="step-title">Agregar sal y mezclar</span>
+        </label>
+        <span class="time-badge">30 min</span>
+      </div>
+      <p class="step-body">Agrega la sal, mezcla doblando la masa sobre sí misma ~1 min hasta integrar. Tapa</p>
+    </div>
+
+    <div class="group-title" style="margin-top:14px">Pliegues</div>
+    <div class="group-note">Mano mojada: estira un lado de la masa y dóblalo al centro. Repite en los 4 lados. Tapar</div>
+    <div class="step chk-row">
+      <div class="step-head">
+        <label class="chk"><input type="checkbox" class="step-check"><span class="step-title">1er pliegue</span></label>
+        <span class="time-badge">30 min</span>
+      </div>
+    </div>
+    <div class="step chk-row">
+      <div class="step-head">
+        <label class="chk"><input type="checkbox" class="step-check"><span class="step-title">2do pliegue</span></label>
+        <span class="time-badge">30 min</span>
+      </div>
+    </div>
+    <div class="step chk-row">
+      <div class="step-head">
+        <label class="chk"><input type="checkbox" class="step-check"><span class="step-title">3er pliegue</span></label>
+        <span class="time-badge">—</span>
+      </div>
+    </div>
+
+    <div class="step chk-row">
+      <div class="step-head">
+        <label class="chk"><input type="checkbox" class="step-check"><span class="step-title">Fermentación en bloque</span></label>
+        <span class="time-badge">1h30–2h30</span>
+      </div>
+      <p class="step-body">Dejar a temperatura ambiente. Guiarse por apariencia: que haya crecido 30–50% (no más) y tenga burbujas, sin llegar a estar lista.</p>
+      <p class="step-body hint">Prueba del dedo (hundir ~1 cm): vuelve rápido → falta · vuelve lento con marca leve → lista · no vuelve → pasada</p>
+    </div>
+
+    <div class="step chk-row">
+      <div class="step-head">
+        <label class="chk"><input type="checkbox" class="step-check"><span class="step-title">Dividir y preformado</span></label>
+        <span class="time-badge">15 min</span>
+      </div>
+      <p class="step-body">Cortar la masa limpiamente en 2 e igualar por peso. Preformar cada pieza girando y tensando</p>
+    </div>
+
+    <div class="step chk-row">
+      <div class="step-head">
+        <label class="chk"><input type="checkbox" class="step-check"><span class="step-title">Formado y banneton</span></label>
+        <span class="time-badge">—</span>
+      </div>
+      <p class="step-body">Volcar sobre superficie ligeramente enharinada, sin aplastar demasiado: doblar los lados al centro y aplastar un poco, girar la masa y crear tensión superficial arrastrándola sobre la mesa hasta obtener 2 bolas firmes y lisas. Colocar en banneton bien enharinado, cierre hacia arriba y "costurar". Tapar con plástico</p>
+    </div>
+
+    <div class="step chk-row">
+      <div class="step-head">
+        <label class="chk"><input type="checkbox" class="step-check"><span class="step-title">Fermentación nocturna</span></label>
+        <span class="time-badge">12–16 h</span>
+      </div>
+      <p class="step-body">Guardar la masa bien tapada en el refrigerador</p>
+    </div>
+  </div>
+
+  <div class="day-divider">— fin del Día 1 —</div>
+
+  <!-- DIA 2 -->
+  <div class="card">
+    <h2>Día 2 — disponer ~2 horas</h2>
+
+    <div class="step chk-row">
+      <div class="step-head">
+        <label class="chk"><input type="checkbox" class="step-check"><span class="step-title">Precalentar horno</span></label>
+        <span class="time-badge">230°C · 40 min</span>
+      </div>
+      <p class="step-body">Coloca la olla holandesa con tapa dentro del horno</p>
+    </div>
+
+    <div class="step chk-row">
+      <div class="step-head">
+        <label class="chk"><input type="checkbox" class="step-check"><span class="step-title">Cortar círculos de papel</span></label>
+        <span class="time-badge">—</span>
+      </div>
+      <p class="step-body">Mientras precalienta: corta 2 círculos de papel de horno con asas y espolvorea con semolina</p>
+    </div>
+
+    <div class="step chk-row">
+      <div class="step-head">
+        <label class="chk"><input type="checkbox" class="step-check"><span class="step-title">Greñado</span></label>
+        <span class="time-badge">—</span>
+      </div>
+      <p class="step-body">Para cada pan, en su turno: voltea la masa sobre el papel y greña con un corte limpio y largo, ligeramente desplazado del centro, 30–45° de inclinación, ~0,5–1 cm de profundidad</p>
+    </div>
+
+    <div class="step chk-row">
+      <div class="step-head">
+        <label class="chk"><input type="checkbox" class="step-check"><span class="step-title">Horneado</span></label>
+        <span class="time-badge">25+15 min</span>
+      </div>
+      <p class="step-body">Traslada con cuidado el pan greñado dentro de la olla caliente y tapa. Hornea hasta dorado profundo</p>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <span class="step-title plain">Enfriado</span>
+        <span class="time-badge">mín. 2 h</span>
+      </div>
+      <p class="step-body">Dejar enfriar sobre rejilla antes de cortar. Cortar y congelar para conservar mejor</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  const totalWeightEl = document.getElementById('totalWeight');
+  const hydrationEl = document.getElementById('hydration');
+  const yeastPctEl = document.getElementById('yeastPct');
+  const saltPctEl = document.getElementById('saltPct');
+  const presetBtns = document.querySelectorAll('.presets button');
+  const advToggle = document.getElementById('advToggle');
+  const advancedBox = document.getElementById('advancedBox');
+
+  advToggle.addEventListener('click', () => {
+    advancedBox.classList.toggle('open');
+  });
+
+  presetBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      hydrationEl.value = btn.dataset.hyd;
+      presetBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      calculate();
+    });
+  });
+
+  hydrationEl.addEventListener('input', () => {
+    presetBtns.forEach(b => b.classList.remove('active'));
+    const match = [...presetBtns].find(b => b.dataset.hyd === hydrationEl.value);
+    if (match) match.classList.add('active');
+    calculate();
+  });
+
+  [totalWeightEl, yeastPctEl, saltPctEl].forEach(el => {
+    el.addEventListener('input', calculate);
+  });
+
+  function fmt(n) {
+    return Math.round(n * 10) / 10;
+  }
+
+  function calculate() {
+    const total = parseFloat(totalWeightEl.value) || 0;
+    const hyd = parseFloat(hydrationEl.value) || 0;
+    const yeastPct = parseFloat(yeastPctEl.value) || 0;
+    const saltPct = parseFloat(saltPctEl.value) || 0;
+
+    const divisor = 1 + (hyd / 100) + (yeastPct / 100) + (saltPct / 100);
+    const flour = total / divisor;
+    const water = flour * (hyd / 100);
+    const yeast = flour * (yeastPct / 100);
+    const salt = flour * (saltPct / 100);
+    const sumTotal = flour + water + yeast + salt;
+
+    document.getElementById('outFlour').textContent = fmt(flour) + ' g';
+    document.getElementById('outWater').textContent = fmt(water) + ' g';
+    document.getElementById('outYeast').textContent = fmt(yeast) + ' g';
+    document.getElementById('outSalt').textContent = fmt(salt) + ' g';
+    document.getElementById('outTotal').textContent = fmt(sumTotal) + ' g';
+
+    document.getElementById('outFlourCups').textContent = fmt(flour / 130) + ' tazas';
+    document.getElementById('outWaterCups').textContent = fmt(water / 240) + ' tazas';
+
+    const yeastTsp = yeast / 3.2;
+    const saltTsp = salt / 5.33;
+    document.getElementById('outYeastTsp').textContent = fmt(yeastTsp) + ' cdta';
+    document.getElementById('outSaltTsp').textContent = fmt(saltTsp) + ' cdta';
+
+    document.getElementById('outHydPct').textContent = fmt(hyd) + '%';
+    document.getElementById('outYeastPct').textContent = fmt(yeastPct) + '%';
+    document.getElementById('outSaltPct').textContent = fmt(saltPct) + '%';
+  }
+
+  calculate();
+
+  document.querySelectorAll('.step-check').forEach(cb => {
+    cb.addEventListener('change', () => {
+      const scope = cb.closest('.step');
+      if (!scope) return;
+      scope.classList.toggle('done', cb.checked);
+    });
+  });
+</script>
+</body>
+</html>
