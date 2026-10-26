@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>Pan Artesanal en Horno Holandés - Versión Móvil</title>
+<title>Pan artesanal de fermentación lenta en horno holandés</title>
 <style>
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body {
@@ -90,7 +90,7 @@
   .advanced { display: none; margin-top: 10px; }
   .advanced.open { display: block; }
 
-  /* ---- Resultado ingredientes: lista tipo tarjeta ---- */
+  /* ---- Resultado ingredientes ---- */
   .ing-row {
     display: flex;
     justify-content: space-between;
@@ -98,7 +98,6 @@
     padding: 10px 0;
     border-bottom: 1px solid #e3e3c0;
   }
-  .ing-row:last-of-type { border-bottom: none; }
   .ing-name { font-weight: bold; font-size: 15.5px; }
   .ing-sub { font-size: 12px; color: #666; margin-top: 2px; }
   .ing-amt { text-align: right; }
@@ -126,6 +125,7 @@
     font-size: 12px;
     color: #666;
     margin: -4px 0 10px 2px;
+    line-height: 1.4;
   }
 
   .step {
@@ -136,7 +136,6 @@
     margin-bottom: 10px;
   }
   .step:last-child { margin-bottom: 0; }
-  .step.sub { background: #fbfdf8; margin-left: 6px; }
 
   .step-head {
     display: flex;
@@ -203,7 +202,7 @@
 </head>
 <body>
 <div class="wrap">
-  <h1>Pan Artesanal de Fermentación Lenta<br>en Horno Holandés</h1>
+  <h1>Pan artesanal de fermentación lenta en horno holandés</h1>
 
   <!-- CALCULADORA -->
   <div class="card">
@@ -273,7 +272,7 @@
       </div>
     </div>
 
-    <div class="ing-row">
+    <div class="ing-row" style="border-bottom:none">
       <div>
         <div class="ing-name">Sal</div>
         <div class="ing-sub" id="outSaltTsp">—</div>
@@ -299,34 +298,24 @@
   <div class="card">
     <h2>Día 1 — disponer ~5 horas</h2>
 
-    <div class="group-title">Mezcla inicial</div>
-    <div class="step sub">
+    <div class="step chk-row">
       <div class="step-head">
-        <span class="step-title plain">Opción 1</span>
+        <label class="chk"><input type="checkbox" class="step-check"><span class="step-title">Mezcla inicial</span></label>
         <span class="time-badge">30 min</span>
       </div>
-      <p class="step-body">Mezcla agua, levadura y harina hasta que no quede harina seca. No amasar. Tapa y deja reposar a temperatura ambiente</p>
+      <p class="step-body">Mezcla <strong>agua</strong>, <strong>levadura</strong> y <strong>harina</strong> hasta que no quede harina seca. No amasar. Tapa y deja reposar a temperatura ambiente</p>
     </div>
-    <div class="step sub">
+
+    <div class="step chk-row">
       <div class="step-head">
-        <span class="step-title plain">Opción 2</span>
-        <span class="time-badge">60 + 30 min</span>
-      </div>
-      <p class="step-body">Mezcla solo harina y agua hasta que no quede harina seca. No amasar. Tapa y deja a temperatura ambiente. Luego incorpora la levadura disuelta en un poco de agua y reposa</p>
-    </div>
-    <div class="step sub chk-row">
-      <div class="step-head">
-        <label class="chk">
-          <input type="checkbox" class="step-check">
-          <span class="step-title">Agregar sal y mezclar</span>
-        </label>
+        <label class="chk"><input type="checkbox" class="step-check"><span class="step-title">Agregar sal y mezclar</span></label>
         <span class="time-badge">30 min</span>
       </div>
-      <p class="step-body">Agrega la sal, mezcla doblando la masa sobre sí misma ~1 min hasta integrar. Tapa</p>
+      <p class="step-body">Agrega la <strong>sal</strong>, mezcla doblando la masa sobre sí misma ~1 min hasta integrar. Tapa</p>
     </div>
 
     <div class="group-title" style="margin-top:14px">Pliegues</div>
-    <div class="group-note">Mano mojada: estira un lado de la masa y dóblalo al centro. Repite en los 4 lados. Tapar</div>
+    <div class="group-note">Con manos mojadas: estira un lado de la masa y dóblalo al centro. O realizar pliegues sobre el mesón estirando y golpeando la masa.</div>
     <div class="step chk-row">
       <div class="step-head">
         <label class="chk"><input type="checkbox" class="step-check"><span class="step-title">1er pliegue</span></label>
@@ -339,19 +328,13 @@
         <span class="time-badge">30 min</span>
       </div>
     </div>
-    <div class="step chk-row">
-      <div class="step-head">
-        <label class="chk"><input type="checkbox" class="step-check"><span class="step-title">3er pliegue</span></label>
-        <span class="time-badge">—</span>
-      </div>
-    </div>
 
     <div class="step chk-row">
       <div class="step-head">
-        <label class="chk"><input type="checkbox" class="step-check"><span class="step-title">Fermentación en bloque</span></label>
+        <label class="chk"><input type="checkbox" class="step-check"><span class="step-title">3er pliegue y fermentación en bloque</span></label>
         <span class="time-badge">1h30–2h30</span>
       </div>
-      <p class="step-body">Dejar a temperatura ambiente. Guiarse por apariencia: que haya crecido 30–50% (no más) y tenga burbujas, sin llegar a estar lista.</p>
+      <p class="step-body">Realizar el 3er pliegue y dejar a temperatura ambiente. Guiarse por apariencia: que haya crecido 30–50% (no más) y tenga burbujas, sin llegar a estar lista.</p>
       <p class="step-body hint">Prueba del dedo (hundir ~1 cm): vuelve rápido → falta · vuelve lento con marca leve → lista · no vuelve → pasada</p>
     </div>
 
@@ -396,26 +379,26 @@
 
     <div class="step chk-row">
       <div class="step-head">
-        <label class="chk"><input type="checkbox" class="step-check"><span class="step-title">Cortar círculos de papel</span></label>
-        <span class="time-badge">—</span>
-      </div>
-      <p class="step-body">Mientras precalienta: corta 2 círculos de papel de horno con asas y espolvorea con semolina</p>
-    </div>
-
-    <div class="step chk-row">
-      <div class="step-head">
         <label class="chk"><input type="checkbox" class="step-check"><span class="step-title">Greñado</span></label>
         <span class="time-badge">—</span>
       </div>
-      <p class="step-body">Para cada pan, en su turno: voltea la masa sobre el papel y greña con un corte limpio y largo, ligeramente desplazado del centro, 30–45° de inclinación, ~0,5–1 cm de profundidad</p>
+      <p class="step-body">Para cada pan, en su turno: voltea la masa sobre la silicona para olla holandesa y greña con un corte limpio y largo, ligeramente desplazado del centro, 30–45° de inclinación, ~0,5–1 cm de profundidad</p>
     </div>
 
     <div class="step chk-row">
       <div class="step-head">
         <label class="chk"><input type="checkbox" class="step-check"><span class="step-title">Horneado</span></label>
-        <span class="time-badge">25+15 min</span>
+        <span class="time-badge">25 min</span>
       </div>
-      <p class="step-body">Traslada con cuidado el pan greñado dentro de la olla caliente y tapa. Hornea hasta dorado profundo</p>
+      <p class="step-body">Traslada con cuidado el pan greñado dentro de la olla caliente y hornea tapado</p>
+    </div>
+
+    <div class="step chk-row">
+      <div class="step-head">
+        <label class="chk"><input type="checkbox" class="step-check"><span class="step-title">Dorado</span></label>
+        <span class="time-badge">15 min</span>
+      </div>
+      <p class="step-body">Quita la tapa y hornea hasta dorado profundo</p>
     </div>
 
     <div class="step">
